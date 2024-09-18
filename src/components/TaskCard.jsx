@@ -66,7 +66,7 @@ export default function TaskCard({ task, user }) {
     <>
       <div className="h-100 w-full flex items-center justify-center bg-teal-lightest font-sans">
         <div
-          className={`  rounded shadow shadow-xl p-3 mb-4 w-full lg:w-3/4 lg:max-w-lg ${
+          className={`  rounded shadow-xl p-3 mb-4 w-full lg:w-3/4 lg:max-w-lg ${
             task.isCompleted ? "bg-zinc-300" : "bg-white"
           }`}
         >
