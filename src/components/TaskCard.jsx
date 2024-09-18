@@ -85,10 +85,15 @@ export default function TaskCard({ task, user }) {
                 </p>
               </div>
             </div>
-            <div className="flex mb-4 items-center">
+            <div className="flex mb-4 items-center justify-between">
               <p className={`text-md ${task.isCompleted ? "line-through text-gray-400" : ""}`}>
                 {task.description}
               </p>
+              <div className={`items-center ${user.role == "user" ? "hidden" : "flex"}`}>
+                <p>
+                  for : <span>@{task?.assignTo?.name}</span>
+                </p>
+              </div>
             </div>
             <div className="flex justify-between items-center">
               <div className="flex justify-center items-center">
