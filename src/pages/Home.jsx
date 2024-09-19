@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import TaskCard from "../components/TaskCard";
 import { AuthContext } from "../context/AuthProvider";
 import Cookies from "universal-cookie";
+import { subscribeToTaskUpdates } from "../js/socket.js";
 
 const cookies = new Cookies();
 
@@ -76,6 +77,14 @@ export default function Home() {
 
     fetchUser();
     fetchTasks();
+
+    // Subscribe to real-time updates
+    subscribeToTaskUpdates((updatedTask) => {
+      setTasks((prevTasks) =>
+        prevTasks.map((task) => (task._id === updatedTask._id ? updatedTask : task))
+      );
+      toast.info("Task updated in real-time!");
+    });
   }, [BASE_URL, navigate, isRefresh]);
 
   return (

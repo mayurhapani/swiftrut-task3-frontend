@@ -4,6 +4,7 @@ import "./App.css";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AuthProvider } from "./context/AuthProvider";
+import axios from "axios";
 
 import Header from "./components/Header";
 import Signup from "./pages/Signup";
@@ -14,7 +15,39 @@ import AddTask from "./pages/AddTask";
 import Logout from "./components/Logout";
 import OtherUserProfile from "./pages/OtherUserProfile";
 
+import { requestPermission } from "./js/firebase.js";
+import { useEffect } from "react";
+
 function App() {
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    const getToken = async () => {
+      const fcmToken = await requestPermission();
+      if (fcmToken) {
+        console.log("FCM token:", fcmToken);
+        // await axios.post("/api/v1/users/fcm-token", { token });
+        try {
+          await axios.patch(
+            "/api/v1/users/update-fcm-token",
+            { fcmToken },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          console.log("FCM token updated successfully");
+        } catch (error) {
+          console.error("Error updating FCM token:", error);
+        }
+      }
+    };
+
+    getToken();
+  }, []);
+
   return (
     <>
       <BrowserRouter>
