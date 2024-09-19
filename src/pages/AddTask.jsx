@@ -106,7 +106,7 @@ export default function AddTask() {
   }, [BASE_URL, navigate]);
 
   return (
-    <div className=" bg-[url(./assets/images/main_bg.jfif)] bg-no-repeat bg-cover h-screen">
+    <div className=" bg-red-200 h-screen">
       <div className="container mx-auto ">
         <div className="flex justify-center items-center h-screen">
           <div className="bg-red-100 p-10 rounded-md text-center w-2/3">

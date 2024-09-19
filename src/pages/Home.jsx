@@ -88,7 +88,7 @@ export default function Home() {
   }, [BASE_URL, navigate, isRefresh]);
 
   return (
-    <div className="">
+    <div className="bg-red-200">
       <div className="container mx-auto ">
         <div className="pt-32 flex flex-col items-center">
           <div className="w-2/3 rounded-sm">
