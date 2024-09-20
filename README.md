@@ -12,6 +12,11 @@ VITE_BASE_URL=http://localhost:8001
 admin email = mayur@gmail.com
 password = Mayur@123
 
+for import / export
+go to profile page // you can find options there for import and export
+You can select CSV file to import data
+suggestion = before import data export old data for data format then update that file
+
 by default user roll = user
 only one admin // can not register new admin for security
 
