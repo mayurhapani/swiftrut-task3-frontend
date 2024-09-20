@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getMessaging, onMessage } from "firebase/messaging";
+import { getMessaging, getToken, onMessage } from "firebase/messaging";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -17,14 +17,26 @@ const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app);
 
 export const requestPermission = async () => {
+  if (!("serviceWorker" in navigator)) {
+    console.warn(
+      "Service workers are not supported by this browser. FCM notifications won't be available."
+    );
+    return;
+  }
+
   try {
-    await Notification.requestPermission();
-    const token = await messaging.getToken({
-      vapidKey:
-        "BAE07LR0f5clAa9CW3KAbb03wrqL7fgMrR4PP9BegR-Cv-DxW5rWjiH-9X7sJPwgYrJcKyEOldkkhIdKqtlSWQ4",
-    });
-    console.log("FCM Token:", token);
-    return token;
+    const permission = await Notification.requestPermission();
+    if (permission === "granted") {
+      // Use getToken from 'firebase/messaging' module
+      const token = await getToken(messaging, {
+        vapidKey:
+          "BAE07LR0f5clAa9CW3KAbb03wrqL7fgMrR4PP9BegR-Cv-DxW5rWjiH-9X7sJPwgYrJcKyEOldkkhIdKqtlSWQ4",
+      });
+      console.log("FCM Token:", token);
+      return token;
+    } else {
+      console.log("Permission not granted for Notification");
+    }
   } catch (err) {
     console.error("Error getting FCM token:", err);
   }

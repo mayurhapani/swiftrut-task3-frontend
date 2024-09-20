@@ -26,7 +26,6 @@ function App() {
       const fcmToken = await requestPermission();
       if (fcmToken) {
         console.log("FCM token:", fcmToken);
-        // await axios.post("/api/v1/users/fcm-token", { token });
         try {
           await axios.patch(
             "/api/v1/users/update-fcm-token",
@@ -58,10 +57,8 @@ function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/addTask" element={<AddTask />} />
             <Route path="/logout" element={<Logout />} />
-
             <Route path="/signin" element={<Signin />} />
             <Route path="/signup" element={<Signup />} />
-
             <Route path="/otherUserProfile/:id" element={<OtherUserProfile />} />
           </Routes>
           <ToastContainer />
