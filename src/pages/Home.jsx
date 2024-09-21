@@ -90,8 +90,13 @@ export default function Home() {
   return (
     <div className="bg-red-200 min-h-screen">
       <div className="container mx-auto ">
-        <div className="pt-32 flex flex-col items-center">
+        <div className="pt-28 flex flex-col items-center">
           <div className="w-2/3 rounded-sm">
+            <div className="mb-4">
+              <h1 className="text-grey-darkest text-3xl font-bold text-center">
+                Welcome {user?.name}
+              </h1>
+            </div>
             <div className="mb-4">
               <h1 className="text-grey-darkest text-xl font-bold">Todo List</h1>
             </div>
