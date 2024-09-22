@@ -6,6 +6,7 @@ import TaskCard from "../components/TaskCard";
 import { AuthContext } from "../context/AuthProvider";
 import Cookies from "universal-cookie";
 import { subscribeToTaskUpdates } from "../js/socket.js";
+import { messaging, requestPermission, onMessageListener } from "../firebase";
 
 const cookies = new Cookies();
 
@@ -25,6 +26,29 @@ export default function Home() {
       navigate("/signin");
       return;
     }
+
+    const setupNotifications = async () => {
+      const fcmToken = await requestPermission();
+      if (fcmToken) {
+        // Send fcmToken to your backend
+        try {
+          await axios.patch(
+            `${BASE_URL}/users/updateFcmToken`,
+            { fcmToken },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          console.log("FCM token updated successfully");
+        } catch (error) {
+          console.error("Error updating FCM token:", error);
+        }
+      }
+    };
+
+    setupNotifications();
 
     // Fetch tasks when component mounts
     const fetchTasks = async () => {
@@ -85,7 +109,42 @@ export default function Home() {
       );
       toast.info("Task updated in real-time!");
     });
+
+    // Handle foreground messages
+    const unsubscribe = onMessageListener().then((payload) => {
+      console.log("Received foreground message:", payload);
+      toast.info(payload.notification.title, {
+        body: payload.notification.body,
+      });
+    });
+
+    return () => {
+      if (unsubscribe && typeof unsubscribe === "function") {
+        unsubscribe();
+      }
+    };
   }, [BASE_URL, navigate, isRefresh]);
+
+  const sendTestNotification = async () => {
+    const token = localStorage.getItem("token") || cookies.get("token");
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/users/sendTestNotification`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log("Test notification sent", response.data);
+    } catch (error) {
+      console.error("Error sending test notification:", error.response?.data || error.message);
+      if (error.response?.data?.details) {
+        console.error("Detailed error:", error.response.data.details);
+      }
+    }
+  };
 
   return (
     <div className="bg-red-200 min-h-screen">
@@ -107,6 +166,7 @@ export default function Home() {
             ) : (
               <p>No posts available</p>
             )}
+            <button onClick={sendTestNotification}>Send Test Notification</button>
           </div>
         </div>
       </div>

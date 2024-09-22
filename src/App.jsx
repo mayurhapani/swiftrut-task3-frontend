@@ -15,20 +15,39 @@ import AddTask from "./pages/AddTask";
 import Logout from "./components/Logout";
 import OtherUserProfile from "./pages/OtherUserProfile";
 
-import { requestPermission } from "./js/firebase.js";
+import { requestPermission } from "./firebase.js"; // Firebase import for permissions
 import { useEffect } from "react";
 
 function App() {
+  const BASE_URL = import.meta.env.VITE_BASE_URL;
+
   useEffect(() => {
+    // Register Service Worker
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker
+          .register("/firebase-messaging-sw.js")
+          .then((registration) => {
+            console.log("Service Worker registered with scope:", registration.scope);
+          })
+          .catch((err) => {
+            console.error("Service Worker registration failed:", err);
+          });
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    // Request Notification Permission and Fetch FCM Token
     const token = localStorage.getItem("token");
 
-    const getToken = async () => {
+    const getTokenAndUpdate = async () => {
       const fcmToken = await requestPermission();
       if (fcmToken) {
         console.log("FCM token:", fcmToken);
         try {
           await axios.patch(
-            "/api/v1/users/update-fcm-token",
+            `${BASE_URL}/users/updateFcmToken`,
             { fcmToken },
             {
               headers: {
@@ -44,7 +63,7 @@ function App() {
       }
     };
 
-    getToken();
+    getTokenAndUpdate();
   }, []);
 
   return (

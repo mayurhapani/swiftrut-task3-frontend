@@ -27,13 +27,20 @@ export const requestPermission = async () => {
   try {
     const permission = await Notification.requestPermission();
     if (permission === "granted") {
-      // Use getToken from 'firebase/messaging' module
-      const token = await getToken(messaging, {
-        vapidKey:
-          "BAE07LR0f5clAa9CW3KAbb03wrqL7fgMrR4PP9BegR-Cv-DxW5rWjiH-9X7sJPwgYrJcKyEOldkkhIdKqtlSWQ4",
-      });
-      console.log("FCM Token:", token);
-      return token;
+      try {
+        const token = await getToken(messaging, {
+          vapidKey:
+            "BAE07LR0f5clAa9CW3KAbb03wrqL7fgMrR4PP9BegR-Cv-DxW5rWjiH-9X7sJPwgYrJcKyEOldkkhIdKqtlSWQ4",
+        });
+        if (token) {
+          console.log("FCM Token:", token);
+          return token;
+        } else {
+          console.warn("No registration token available.");
+        }
+      } catch (tokenError) {
+        console.error("An error occurred while retrieving token. ", tokenError);
+      }
     } else {
       console.log("Permission not granted for Notification");
     }
@@ -43,6 +50,12 @@ export const requestPermission = async () => {
 };
 
 // Listen for messages when the app is open
-onMessage(messaging, (payload) => {
-  console.log("Message received: ", payload);
-});
+export const onMessageListener = () =>
+  new Promise((resolve) => {
+    onMessage(messaging, (payload) => {
+      resolve(payload);
+    });
+  });
+
+// Export the messaging object
+export { messaging };
