@@ -18,7 +18,7 @@ messaging.onBackgroundMessage((payload) => {
   const notificationTitle = payload.notification.title;
   const notificationOptions = {
     body: payload.notification.body,
-    icon: '/path/to/icon.png'
+    icon: '/path/to/icon.png' // Replace with your app's icon path
   };
 
   self.registration.showNotification(notificationTitle, notificationOptions);

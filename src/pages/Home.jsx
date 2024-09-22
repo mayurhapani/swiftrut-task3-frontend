@@ -7,6 +7,7 @@ import { AuthContext } from "../context/AuthProvider";
 import Cookies from "universal-cookie";
 import { subscribeToTaskUpdates } from "../js/socket.js";
 import { messaging, requestPermission, onMessageListener } from "../firebase";
+import { onMessage } from "firebase/messaging";
 
 const cookies = new Cookies();
 
@@ -111,11 +112,13 @@ export default function Home() {
     });
 
     // Handle foreground messages
-    const unsubscribe = onMessageListener().then((payload) => {
+    const unsubscribe = onMessage(messaging, (payload) => {
       console.log("Received foreground message:", payload);
       toast.info(payload.notification.title, {
         body: payload.notification.body,
       });
+      // Optionally, you can update the tasks list here
+      fetchTasks();
     });
 
     return () => {

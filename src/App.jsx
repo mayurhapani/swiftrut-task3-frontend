@@ -66,6 +66,31 @@ function App() {
     getTokenAndUpdate();
   }, []);
 
+  useEffect(() => {
+    const updateFCMToken = async () => {
+      const fcmToken = await requestPermission();
+      if (fcmToken) {
+        // Send fcmToken to your backend
+        try {
+          await axios.patch(
+            `${BASE_URL}/users/updateFcmToken`,
+            { fcmToken },
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
+          );
+          console.log("FCM token updated successfully");
+        } catch (error) {
+          console.error("Error updating FCM token:", error);
+        }
+      }
+    };
+
+    updateFCMToken();
+  }, []);
+
   return (
     <>
       <BrowserRouter>
